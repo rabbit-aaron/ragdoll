@@ -34,7 +34,7 @@ class BaseEntry(abc.ABC):
         self.extra_kwargs = kwargs
 
     @abc.abstractmethod
-    def to_python(slf, value: Any) -> Any:  # pragma: no cover
+    def to_python(self, value: Any) -> Any:  # pragma: no cover
         raise NotImplementedError
 
     def get_raw_value(self) -> Any:

@@ -19,7 +19,7 @@ class BaseEnvEntry(BaseEntry):
 
 
 class StrEnv(BaseEnvEntry):
-    def to_python(slf, value: str) -> str:
+    def to_python(self, value: str) -> str:
         return value
 
 
