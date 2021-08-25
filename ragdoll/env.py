@@ -61,8 +61,8 @@ class EnvSetting(BaseSetting):
 
     @utils.classproperty
     @functools.lru_cache(maxsize=None)
-    def source(cls) -> dict:
+    def source(cls) -> typing.Mapping:
         if cls.case_sensitive:
-            return dict(os.environ)
+            return os.environ
         else:
             return {k.lower(): v for k, v in os.environ.items()}

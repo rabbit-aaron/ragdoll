@@ -1,4 +1,5 @@
 import abc
+import typing
 from typing import Any, Type, Union
 
 from ragdoll import errors, utils
@@ -82,8 +83,9 @@ class BaseSetting(metaclass=SettingMeta):
 
     auto_configure = True
 
+    @abc.abstractmethod
     @utils.classproperty
-    def source(cls) -> dict:  # pragma: no cover
+    def source(cls) -> typing.Mapping:  # pragma: no cover
         raise NotImplementedError
 
     @classmethod
