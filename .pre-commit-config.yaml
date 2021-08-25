@@ -1,0 +1,19 @@
+repos:
+    - repo: local
+      hooks:
+        - id: black
+          name: black
+          language: python
+          entry: black
+          require_serial: true
+          types_or: [python, pyi]
+        - id: flake8
+          name: flake8
+          language: python
+          entry: flake8
+          require_serial: true
+          types_or: [python, pyi]
+
+default_language_version:
+  python: python3.9
+

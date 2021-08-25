@@ -4,6 +4,8 @@ version = "0.1.2"
 description = ""
 authors = ["Aaron Zhang <rabbit.aaron@gmail.com>"]
 license = "MIT"
+homepage = "https://github.com/rabbit-aaron/ragdoll"
+repository = "https://github.com/rabbit-aaron/ragdoll.git"
 
 [tool.poetry.dependencies]
 python = "^3.6.2"
@@ -14,7 +16,11 @@ pytest = "^6.2.4"
 flake8 = "^3.9.2"
 pytest-cov = "^2.12.1"
 bump2version = "^1.0.1"
+pre-commit = "^2.14.0"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"
+
+
+
