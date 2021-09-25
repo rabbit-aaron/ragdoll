@@ -23,3 +23,10 @@ def test_bad_int_env(monkeypatch):
 
         class MyEnvSettings(EnvSetting):
             DECIMAL = IntEnv()
+
+
+def test_int_env_name():
+    class MyEnvSetting(EnvSetting):
+        FOO = IntEnv(0)
+
+    assert MyEnvSetting.__dict__["FOO"].name == "FOO"

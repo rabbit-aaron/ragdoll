@@ -44,3 +44,10 @@ def test_bad_bool_env(monkeypatch):
 
         class MyEnvSetting(EnvSetting):
             FOO = BoolEnv()
+
+
+def test_bool_env_name():
+    class MyEnvSetting(EnvSetting):
+        FOO = BoolEnv(False)
+
+    assert MyEnvSetting.__dict__["FOO"].name == "FOO"
