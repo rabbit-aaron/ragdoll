@@ -1,9 +1,11 @@
 # Why the name?
 Coming up with a good name that's not used in PyPI is hard, and my cat happens to be next to me when I initialise this project, hence the name.
 # Introduction
-Ragdoll is a small library that allows you to manage environment variables in your project easily. It allows you to convert environment variables into python types easily.
-The project also included a extension for integrations with Django settings files.
-Ragdoll aims to solve one problem and one problem only. With no external dependencies. It's design to be extensible so adding new features on it would be very easy.
+Ragdoll is a small library that allows you to manage environment variables in your project easily. It allows you to convert environment variables into Python objects easily.
+
+The project also provided an extension for integrations with Django settings files.
+
+Ragdoll aims to solve one problem and one problem only, with no external dependencies. It's design to be extensible so adding new features on it would be very easy, there are some examples below.
 
 # Getting started
 ```python
@@ -24,19 +26,20 @@ Then to access these variables
 ```python
 # assuming these environment variables are set
 # WORKER_COUNT=50
-# SECRET_KEY=mission_impossible
+# SECRET_KEY=meow
 # DEBUG=1
 from settings import MySetting
 
-# types will be converted already
+# types will be converted automatically
 MySetting.WORKER_COUNT # 50
 MySetting.HOST_NAME # 'localhost' (environment variable not set, default value is used)
 MySetting.DEBUG # True
+MySetting.SECRET_KEY # 'meow'
 ```
 # Django
 
 ```python
-#settings.py
+# settings.py
 from ragdoll.django import DjangoEnvSetting
 from ragdoll.env import BoolEnv, StrEnv, IntEnv
 
@@ -189,6 +192,6 @@ class HexIntEnv(BaseEnvEntry):
             return int(value, base=16)
         except ValueError:
             # if ImproperlyConfigured is raised, ragdoll will collect all of the errors
-            # and display re-raise them all at once
+            # and re-raise them all at once
             raise ImproperlyConfigured(f"{self.name} must be a hexadecimal value, e.g. '0x1000'")
 ```
