@@ -17,10 +17,6 @@ class BaseEnvEntry(BaseEntry):
         if not owner.case_sensitive:
             self._name = name.lower()
 
-    @property
-    def name(self):
-        return self._name
-
 
 class StrEnv(BaseEnvEntry):
     def to_python(self, value: str) -> str:

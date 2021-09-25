@@ -51,8 +51,15 @@ def test_str_env_not_set_within_choices(monkeypatch):
             FOO = StrEnv(choices={"ABC"})
 
 
-def test_str_env_not_found_no_default(monkeypatch):
+def test_str_env_not_found_no_default():
     with pytest.raises(errors.ImproperlyConfigured):
 
         class MyEnvSetting(EnvSetting):
             FOO = StrEnv()
+
+
+def test_str_env_name():
+    class MyEnvSetting(EnvSetting):
+        FOO = StrEnv("")
+
+    assert MyEnvSetting.__dict__["FOO"].name == "FOO"

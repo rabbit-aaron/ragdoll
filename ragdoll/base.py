@@ -34,6 +34,10 @@ class BaseEntry(abc.ABC):
         self._choices = choices
         self.extra_kwargs = kwargs
 
+    @property
+    def name(self):
+        return self._name
+
     @abc.abstractmethod
     def to_python(self, value: Any) -> Any:  # pragma: no cover
         raise NotImplementedError
@@ -50,7 +54,7 @@ class BaseEntry(abc.ABC):
 
         self.source = owner.source
 
-    def __get__(self, instance: object, owner: type):
+    def __get__(self, instance: "BaseSetting", owner: Type["BaseSetting"]):
         try:
             raw_setting_value = self.get_raw_value()
         except errors.EnvNotFound as env_not_found:
