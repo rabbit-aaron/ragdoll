@@ -1,6 +1,5 @@
 import abc
-import typing
-from typing import Any, Type, Union
+from typing import Any, Type, Union, Optional, Mapping
 
 from ragdoll import errors, utils
 
@@ -16,23 +15,27 @@ class BaseEntry(abc.ABC):
         default_value: Any = _NOT_SET,
         *,
         name: str = None,
-        choices: Union[list, tuple, set] = None,
+        choices: Optional[Union[list, tuple, set]] = None,
+        process_default_value: bool = False,
         **kwargs,
     ):
         self._name = name
-
-        if (
-            choices
-            and default_value is not self._NOT_SET
-            and default_value not in choices
-        ):
-            raise errors.ImproperlyConfigured(
-                f"`default_value` must be one of {choices!r}"
-            )
-
+        self._process_default_value = process_default_value
         self._default_value = default_value
+
+        if choices and self._default is not self._NOT_SET:
+            assert (
+                default_value in choices
+            ), f"`default_value` must be one of {choices!r}"
+
         self._choices = choices
         self.extra_kwargs = kwargs
+
+    @property
+    def _default(self) -> Any:
+        if self._process_default_value:
+            return self.to_python(self._default_value)
+        return self._default_value
 
     @property
     def name(self):
@@ -58,12 +61,12 @@ class BaseEntry(abc.ABC):
         try:
             raw_setting_value = self.get_raw_value()
         except errors.EnvNotFound as env_not_found:
-            if self._default_value is self._NOT_SET:
+            if self._default is self._NOT_SET:
                 raise errors.ImproperlyConfigured(
                     f"{self._name} setting was not set"
                 ) from env_not_found
 
-            return self._default_value
+            return self._default
 
         converted_value = self.to_python(raw_setting_value)
 
@@ -89,7 +92,7 @@ class BaseSetting(metaclass=SettingMeta):
 
     @abc.abstractmethod
     @utils.classproperty
-    def source(cls) -> typing.Mapping:  # pragma: no cover
+    def source(cls) -> Mapping:  # pragma: no cover
         raise NotImplementedError
 
     @classmethod
