@@ -25,7 +25,7 @@ class BaseEntry(abc.ABC):
 
         if choices and self._default is not self._NOT_SET:
             assert (
-                default_value in choices
+                self._default in choices
             ), f"`default_value` must be one of {choices!r}"
 
         self._choices = choices
