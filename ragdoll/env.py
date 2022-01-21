@@ -25,8 +25,8 @@ class StrEnv(BaseEnvEntry):
 
 class IntEnv(BaseEnvEntry):
     def __init__(self, *args, base: int = 10, **kwargs):
-        super().__init__(*args, **kwargs)
         self._base = base
+        super().__init__(*args, **kwargs)
 
     def to_python(self, value: str) -> int:
         try:

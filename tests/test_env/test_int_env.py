@@ -30,3 +30,22 @@ def test_int_env_name():
         FOO = IntEnv(0)
 
     assert MyEnvSetting.__dict__["FOO"].name == "FOO"
+
+
+def test_process_default_value():
+    class MyEnvSetting(EnvSetting):
+        FOO = IntEnv("0", process_default_value=True)
+
+    assert MyEnvSetting.FOO == 0
+
+
+def test_process_default_value_choices():
+    class MyEnvSetting(EnvSetting):
+        FOO = IntEnv("0", process_default_value=True, choices=[0])
+
+
+def test_process_default_value_choices_error():
+    with pytest.raises(AssertionError):
+
+        class MyEnvSetting(EnvSetting):
+            FOO = IntEnv("0", process_default_value=True, choices=[1])

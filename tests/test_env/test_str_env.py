@@ -31,7 +31,7 @@ def test_str_env_case_insensitive(monkeypatch):
 
 
 def test_str_env_default_not_in_choice():
-    with pytest.raises(errors.ImproperlyConfigured):
+    with pytest.raises(AssertionError):
         StrEnv(default_value="foo", choices={"hello", "world"})
 
 
