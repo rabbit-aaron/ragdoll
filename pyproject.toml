@@ -8,19 +8,17 @@ homepage = "https://github.com/rabbit-aaron/ragdoll"
 repository = "https://github.com/rabbit-aaron/ragdoll.git"
 
 [tool.poetry.dependencies]
-python = "^3.6.2"
+python = ">=3.9"
 
-[tool.poetry.dev-dependencies]
-black = "^21.7b0"
-pytest = "^6.2.4"
-flake8 = "^3.9.2"
-pytest-cov = "^2.12.1"
+[tool.poetry.group.dev.dependencies]
+pytest = "^7.4.0"
+pytest-cov = "^4.1.0"
 bump2version = "^1.0.1"
-pre-commit = "^2.14.0"
+
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"
 
 [tool.black]
-target-version = ["py36", "py37", "py38", "py39"]
+target-version = ["py39", "py310", "py311"]

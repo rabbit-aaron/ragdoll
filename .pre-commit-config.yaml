@@ -1,19 +1,26 @@
 repos:
-    - repo: local
-      hooks:
-        - id: black
-          name: black
-          language: python
-          entry: black
-          require_serial: true
-          types_or: [python, pyi]
-        - id: flake8
-          name: flake8
-          language: python
-          entry: flake8
-          require_serial: true
-          types_or: [python, pyi]
+  - repo: https://github.com/asottile/pyupgrade
+    rev: v3.10.1
+    hooks:
+      - id: pyupgrade
+        args: [--py39-plus]
+  - repo: https://github.com/PyCQA/isort
+    rev: 5.12.0
+    hooks:
+      - id: isort
+  - repo: https://github.com/psf/black
+    rev: 23.7.0
+    hooks:
+      - id: black
+  - repo: https://github.com/PyCQA/flake8
+    rev: 6.1.0
+    hooks:
+      - id: flake8
+  - repo: https://github.com/pre-commit/mirrors-mypy
+    rev: v1.5.1
+    hooks:
+      - id: mypy
 
 default_language_version:
-  python: python3.9
+  python: python3
 

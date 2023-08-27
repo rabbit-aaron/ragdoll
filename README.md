@@ -138,9 +138,9 @@ MySetting.configure()
 ```python
 # my_fields.py
 from typing import List
-from ragdoll.env import BaseEnvEntry
+from ragdoll.base import BaseEntry
 
-class CommaSeparatedEnv(BaseEnvEntry):
+class CommaSeparatedEnv(BaseEntry):
     """This field turns comma separated values into a list of strings"""
     def to_python(self, value:str) -> List[str]:
         return value.split(",")
@@ -164,9 +164,9 @@ MyEnvSetting.ALLOWED_HOSTS # ['example.com', 'example.org']
 ```python
 # my_fields.py
 import dj_database_url
-frmo ragdoll.env import BaseEnvEntry
+frmo ragdoll.env import BaseEntry
 
-class DbUrlEnv(BaseEnvEntry):
+class DbUrlEnv(BaseEntry):
     """This field turns database URL into a Django DATABASES setting dictionary"""
     def to_python(self, value:str) -> dict:
         return {"default": dj_database_url.parse(value)}
@@ -186,10 +186,10 @@ class MySetting(DjangoEnvSetting):
 ```python
 # my_fields.py
 import dj_database_url
-from ragdoll.env import BaseEnvEntry
+from ragdoll.base import BaseEntry
 from ragdool.errors import ImproperlyConfigured
 
-class HexIntEnv(BaseEnvEntry):
+class HexIntEnv(BaseEntry):
     """This field turns a hex string into an integer"""
     def to_python(self, value:str) -> int:
         try:
