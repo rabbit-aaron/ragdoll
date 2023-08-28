@@ -1,4 +1,4 @@
-__version__ = "0.2.0"
+__version__ = "1.0.0"
 __author__ = "Aaron Zhang <rabbit.aaron@gmail.com>"
 
 from ragdoll import base, django, env, errors
