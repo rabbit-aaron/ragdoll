@@ -11,11 +11,11 @@ jobs:
       image: python:${{ matrix.python }}-alpine
     steps:
       - name: checkout repository
-        uses: actions/checkout@v2
-      - name: install git
-        run: apk upgrade && apk add git
+        uses: actions/checkout@v3
       - name: pre-commit
-        run: python -m venv ~/.pre-commit && ~/.pre-commit/bin/pip install --upgrade pip && ~/.pre-commit/bin/pip install pre-commit && ~/.pre-commit/bin/pre-commit run --all
+        uses: pre-commit/action@v3.0.0
+        with:
+          extra_args: run --all
       - name: install poetry
         run: python -m venv ~/.poetry && ~/.poetry/bin/pip install --upgrade pip && ~/.poetry/bin/pip install poetry
       - name: install python dependencies
