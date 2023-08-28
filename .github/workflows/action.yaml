@@ -8,10 +8,12 @@ jobs:
       matrix:
         python: ["3.9", "3.10", "3.11"]
     container:
-      image: python:${{ matrix.python }}
+      image: python:${{ matrix.python }}-alpine
     steps:
       - name: checkout repository
         uses: actions/checkout@v2
+      - name: install git
+        run: apk upgrade && apk add git
       - name: pre-commit
         run: python -m venv ~/.pre-commit && ~/.pre-commit/bin/pip install --upgrade pip && ~/.pre-commit/bin/pip install pre-commit && ~/.pre-commit/bin/pre-commit run --all
       - name: install poetry
