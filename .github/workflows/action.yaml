@@ -8,7 +8,7 @@ jobs:
       matrix:
         python: ["3.9", "3.10", "3.11"]
     container:
-      image: python:${{ matrix.python }}-alpine
+      image: python:${{ matrix.python }}-bookworm
     steps:
       - name: checkout repository
         uses: actions/checkout@v3
