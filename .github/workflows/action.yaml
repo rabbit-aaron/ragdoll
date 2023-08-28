@@ -15,7 +15,7 @@ jobs:
       - name: pre-commit
         uses: pre-commit/action@v3.0.0
         with:
-          extra_args: run --all
+          extra_args: --all
       - name: install poetry
         run: python -m venv ~/.poetry && ~/.poetry/bin/pip install --upgrade pip && ~/.poetry/bin/pip install poetry
       - name: install python dependencies
