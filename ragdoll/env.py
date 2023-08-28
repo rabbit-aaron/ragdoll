@@ -63,7 +63,7 @@ class EnvSetting(BaseSetting):
 
     @utils.classproperty
     @functools.cache
-    def source(cls) -> typing.Mapping:
+    def source(cls) -> typing.Mapping[str, str]:
         if cls.case_sensitive:
             return os.environ
         else:

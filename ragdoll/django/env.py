@@ -4,12 +4,10 @@ import inspect
 import os
 import sys
 import typing
-from functools import lru_cache
-from types import SimpleNamespace
-from typing import Any
+from types import SimpleNamespace, ModuleType
 
 from ragdoll import base, env
-from ragdoll.env import EnvSetting
+from ragdoll.env import EnvSetting, BaseEnvEntry
 
 
 class DjangoSettingMixin:
@@ -25,19 +23,16 @@ class DjangoEnvSetting(DjangoSettingMixin, EnvSetting):
     pass
 
 
-def dir_factory(f_globals: dict[str, Any]) -> callable[[], list[str]]:
-    @lru_cache(maxsize=None)
-    def dir_() -> list[str]:
-        ret = []
-        for k, v in tuple(f_globals.items()):
-            if isinstance(v, DjangoEnvEntryMixin):
-                mock_owner = SimpleNamespace(source=os.environ, case_sensitive=True)
-                v.__set_name__(mock_owner, k)
-                f_globals[k] = v.__get__(mock_owner, None)
-            ret.append(k)
-        return ret
+def dir_factory(module: ModuleType) -> typing.Callable[[], list[str]]:
+    def dir_() -> typing.Generator[str, None, None]:
+        mock_owner = SimpleNamespace(source=os.environ, case_sensitive=True)
+        for name, value in module.__dict__.items():
+            if isinstance(value, BaseEnvEntry):
+                value.__set_name__(mock_owner, name)  # type: ignore
+                setattr(module, name, value.__get__(mock_owner, None))  # type: ignore
+            yield name
 
-    return dir_
+    return lambda: list(dir_())
 
 
 class DjangoEnvEntryMixin:
@@ -45,7 +40,7 @@ class DjangoEnvEntryMixin:
         frame = inspect.stack()[1].frame
         module = inspect.getmodule(frame)
         if not getattr(module, "_dir_patched", False):
-            module.__dir__ = dir_factory(frame.f_globals)
+            module.__dir__ = dir_factory(module)
             module._dir_patched = True
 
         del frame
