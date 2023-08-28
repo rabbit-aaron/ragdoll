@@ -2,25 +2,11 @@ from __future__ import annotations
 
 import inspect
 import os
-import sys
 import typing
-from types import SimpleNamespace, ModuleType
+from types import ModuleType, SimpleNamespace
 
-from ragdoll import base, env
-from ragdoll.env import EnvSetting, BaseEnvEntry
-
-
-class DjangoSettingMixin:
-    default_export = True
-
-    @classmethod
-    def configure_entry(cls, entry: base.BaseEntry, name: str, value: str):
-        if entry.extra_kwargs.get("export", cls.default_export):
-            setattr(sys.modules[cls.__module__], name, value)
-
-
-class DjangoEnvSetting(DjangoSettingMixin, EnvSetting):
-    pass
+from ragdoll import env
+from ragdoll.env import BaseEnvEntry
 
 
 def dir_factory(module: ModuleType) -> typing.Callable[[], list[str]]:
@@ -28,8 +14,8 @@ def dir_factory(module: ModuleType) -> typing.Callable[[], list[str]]:
         mock_owner = SimpleNamespace(source=os.environ, case_sensitive=True)
         for name, value in module.__dict__.items():
             if isinstance(value, BaseEnvEntry):
-                value.__set_name__(mock_owner, name)  # type: ignore
-                setattr(module, name, value.__get__(mock_owner, None))  # type: ignore
+                value.__set_name__(mock_owner, name)  # type: ignore[arg-type]
+                setattr(module, name, value.__get__(mock_owner, None))  # type: ignore[arg-type]
             yield name
 
     return lambda: list(dir_())

@@ -6,24 +6,20 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python: ["3.6", "3.7", "3.8", "3.9"]
+        python: ["3.9", "3.10", "3.11"]
     container:
       image: python:${{ matrix.python }}
     steps:
       - name: checkout repository
         uses: actions/checkout@v2
-      - name: virtualenv for poetry
-        run: python -m venv ~/.poetry && ~/.poetry/bin/pip install --upgrade pip
-      - name: install poetry in virtualenv
-        run: ~/.poetry/bin/pip install poetry
+      - name: pre-commit
+        run: python -m venv ~/.pre-commit && ~/.pre-commit/bin/pip install --upgrade pip && ~/.pre-commit/bin/pip install pre-commit
+      - name: install poetry
+        run: python -m venv ~/.poetry && ~/.poetry/bin/pip install --upgrade pip && ~/.poetry/bin/pip install poetry
       - name: install python dependencies
         run: ~/.poetry/bin/poetry install
       - name: allow access to the virtualenv
         run: echo PATH="$(~/.poetry/bin/poetry run printenv VIRTUAL_ENV)/bin:${PATH}" >> $GITHUB_ENV
-      - name: black
-        run: black --check .
-      - name: flake8
-        run: flake8
       - name: pytest
         run: pytest --cov=ragdoll --cov-report term-missing tests/
       - name: build
