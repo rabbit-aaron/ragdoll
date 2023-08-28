@@ -1,11 +1,13 @@
+from __future__ import annotations
+
 import abc
-from typing import Any, Type, Union, Optional, Mapping
+from collections.abc import Mapping
+from typing import Any, ClassVar, Protocol
 
 from ragdoll import errors, utils
 
 
 class BaseEntry(abc.ABC):
-
     _NOT_SET = object()
     DEFAULT_EXPORT = False
     source: dict
@@ -14,8 +16,8 @@ class BaseEntry(abc.ABC):
         self,
         default_value: Any = _NOT_SET,
         *,
-        name: str = None,
-        choices: Optional[Union[list, tuple, set]] = None,
+        name: str | None = None,
+        choices: list | tuple | set | None = None,
         process_default_value: bool = False,
         **kwargs,
     ):
@@ -51,13 +53,13 @@ class BaseEntry(abc.ABC):
         except KeyError as key_error:
             raise errors.EnvNotFound from key_error
 
-    def __set_name__(self, owner: Type["BaseSetting"], name: str):
+    def __set_name__(self, owner: type[BaseSetting], name: str):
         if not self._name:
             self._name = name
 
         self.source = owner.source
 
-    def __get__(self, instance: "BaseSetting", owner: Type["BaseSetting"]):
+    def __get__(self, instance: BaseSetting, owner: type[BaseSetting]):
         try:
             raw_setting_value = self.get_raw_value()
         except errors.EnvNotFound as env_not_found:
@@ -78,16 +80,28 @@ class BaseEntry(abc.ABC):
         return converted_value
 
 
+class SettingProtocol(Protocol):  # pragma: no cover
+    auto_configure: ClassVar[bool]
+    source: Mapping
+
+    @classmethod
+    def configure_entry(cls, entry: BaseEntry, name: str, value: str):
+        ...
+
+    @classmethod
+    def configure(cls) -> None:
+        ...
+
+
 class SettingMeta(abc.ABCMeta):
-    def __init__(cls: Type["BaseSetting"], *args, **kwargs):
-        super().__init__(*args, **kwargs)
+    def __init__(cls: type[SettingProtocol], *args, **kwargs):
+        super().__init__(*args, **kwargs)  # type: ignore
 
         if cls.auto_configure:
             cls.configure()
 
 
 class BaseSetting(metaclass=SettingMeta):
-
     auto_configure = True
 
     @abc.abstractmethod

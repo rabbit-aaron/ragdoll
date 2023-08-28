@@ -1,6 +1,6 @@
-__version__ = "0.2.0"
+__version__ = "1.0.0"
 __author__ = "Aaron Zhang <rabbit.aaron@gmail.com>"
 
-from ragdoll import env, base, errors, django
+from ragdoll import base, django, env, errors
 
 __all__ = ["env", "base", "errors", "django"]

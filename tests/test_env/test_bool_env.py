@@ -1,40 +1,28 @@
 import pytest
 
-from ragdoll import errors
-from ragdoll.env import EnvSetting, BoolEnv
+from ragdoll import env, errors
 
 
-def test_bool_env(monkeypatch):
-    monkeypatch.setenv("y1", "YES")
-    monkeypatch.setenv("y2", "yes")
-    monkeypatch.setenv("y3", "1")
-    monkeypatch.setenv("y4", "true")
+@pytest.mark.parametrize(
+    "input_value,expected",
+    [
+        ("YES", True),
+        ("yes", True),
+        ("1", True),
+        ("true", True),
+        ("no", False),
+        ("0", False),
+        ("FALSE", False),
+        ("", False),
+    ],
+)
+def test_bool_env(input_value, expected, monkeypatch):
+    monkeypatch.setenv("var", input_value)
 
-    monkeypatch.setenv("n1", "no")
-    monkeypatch.setenv("n2", "0")
-    monkeypatch.setenv("n3", "FALSE")
-    monkeypatch.setenv("n4", "")
+    class MyEnvSettings(env.EnvSetting):
+        var = env.Bool()
 
-    class MyEnvSettings(EnvSetting):
-        y1 = BoolEnv()
-        y2 = BoolEnv()
-        y3 = BoolEnv()
-        y4 = BoolEnv()
-
-        n1 = BoolEnv()
-        n2 = BoolEnv()
-        n3 = BoolEnv()
-        n4 = BoolEnv()
-
-    assert MyEnvSettings.y1 is True
-    assert MyEnvSettings.y2 is True
-    assert MyEnvSettings.y3 is True
-    assert MyEnvSettings.y4 is True
-
-    assert MyEnvSettings.n1 is False
-    assert MyEnvSettings.n2 is False
-    assert MyEnvSettings.n3 is False
-    assert MyEnvSettings.n4 is False
+    assert MyEnvSettings.var is expected
 
 
 def test_bad_bool_env(monkeypatch):
@@ -42,12 +30,12 @@ def test_bad_bool_env(monkeypatch):
 
     with pytest.raises(errors.ImproperlyConfigured):
 
-        class MyEnvSetting(EnvSetting):
-            FOO = BoolEnv()
+        class MyEnvSetting(env.EnvSetting):
+            FOO = env.Bool()
 
 
 def test_bool_env_name():
-    class MyEnvSetting(EnvSetting):
-        FOO = BoolEnv(False)
+    class MyEnvSetting(env.EnvSetting):
+        FOO = env.Bool(False)
 
     assert MyEnvSetting.__dict__["FOO"].name == "FOO"
