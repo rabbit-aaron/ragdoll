@@ -80,7 +80,7 @@ class BaseEntry(abc.ABC):
         return converted_value
 
 
-class SettingProtocol(Protocol):
+class SettingProtocol(Protocol):  # pragma: no cover
     auto_configure: ClassVar[bool]
     source: Mapping
 

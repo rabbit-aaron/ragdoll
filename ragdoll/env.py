@@ -70,7 +70,7 @@ class EnvSetting(BaseSetting):
             return {k.lower(): v for k, v in os.environ.items()}
 
 
-if typing.TYPE_CHECKING:
+if typing.TYPE_CHECKING:  # pragma: no cover
     Int = int  # type: ignore # noqa: F811
     Bool = bool  # type: ignore # noqa: F811
     Str = str  # type: ignore # noqa: F811
