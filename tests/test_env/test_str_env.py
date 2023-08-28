@@ -1,7 +1,6 @@
 import pytest
 
-from ragdoll import errors
-from ragdoll import env
+from ragdoll import env, errors
 
 
 def test_str_env_case_sensitive(monkeypatch):

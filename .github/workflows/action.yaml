@@ -13,7 +13,7 @@ jobs:
       - name: checkout repository
         uses: actions/checkout@v2
       - name: pre-commit
-        run: python -m venv ~/.pre-commit && ~/.pre-commit/bin/pip install --upgrade pip && ~/.pre-commit/bin/pip install pre-commit
+        run: python -m venv ~/.pre-commit && ~/.pre-commit/bin/pip install --upgrade pip && ~/.pre-commit/bin/pip install pre-commit && pre-commit run --all
       - name: install poetry
         run: python -m venv ~/.poetry && ~/.poetry/bin/pip install --upgrade pip && ~/.poetry/bin/pip install poetry
       - name: install python dependencies
