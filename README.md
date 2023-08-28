@@ -106,6 +106,10 @@ Since the injected `__dir__` function only look at global variables, nested sett
 You must assign the settings to a global variable first, then use it in nested settings.
 
 ```python
+######################
+# THIS WILL NOT WORK #
+######################
+
 from ragdoll.django import env
 
 DATABASES = {
@@ -125,23 +129,23 @@ DATABASES = {
 ```python
 # settings.py
 from dotenv import load_dotenv
-from ragdoll.env import EnvSetting, BoolEnv
+from ragdoll import env
 
 # just ensure load_dotenv is called before the class is defined
 load_dotenv()
 
-class MySettings(EnvSetting):
-    DEBUG = BoolEnv()
+class MySettings(env.EnvSetting):
+    DEBUG = env.Bool()
 ```
 alternatively, you can turn off `auto_configure` to defer the loading of variables
 
 ```python
 from dotenv import load_dotenv
-from ragdoll.env import EnvSetting, BoolEnv
+from ragdoll import env
 
-class MySetting(EnvSetting):
+class MySetting(env.EnvSetting):
     auto_configure = False
-    DEBUG = BoolEnv()
+    DEBUG = env.Bool()
 
 load_dotenv()
 MySetting.configure()
@@ -153,9 +157,9 @@ MySetting.configure()
 ```python
 # my_fields.py
 from typing import List
-from ragdoll.base import BaseEntry
+from ragdoll import env
 
-class CommaSeparatedEnv(BaseEntry):
+class CommaSeparatedStr(env.BaseEnvEntry):
     """This field turns comma separated values into a list of strings"""
     def to_python(self, value:str) -> List[str]:
         return value.split(",")
@@ -166,11 +170,11 @@ To use it:
 # assuming the this environment variables is set
 # ALLOWED_HOSTS=example.com,example.org
 
-from ragdoll.env import EnvSetting
-from my_fields import CommaSeparatedEnv
+from ragdoll import env
+from my_fields import CommaSeparatedStr
 
-class MyEnvSetting(EnvSetting):
-    ALLOWED_HOSTS = CommaSeparatedEnv()
+class MyEnvSetting(env.EnvSetting):
+    ALLOWED_HOSTS = CommaSeparatedStr()
 
 MyEnvSetting.ALLOWED_HOSTS # ['example.com', 'example.org']
 ```
@@ -203,17 +207,16 @@ DATABASES = DbUrl("postgres://ragdoll:meow@localhost:5432/ragdoll")
 
 ```python
 # my_fields.py
-import dj_database_url
-from ragdoll.base import BaseEntry
+from ragdoll import env
 from ragdool.errors import ImproperlyConfigured
 
-class HexIntEnv(BaseEntry):
+class HexInt(env.BaseEnvEntry):
     """This field turns a hex string into an integer"""
     def to_python(self, value:str) -> int:
         try:
             return int(value, base=16)
         except ValueError:
-            # if ImproperlyConfigured is raised, ragdoll will collect all of the errors
+            # if ImproperlyConfigured is raised, ragdoll will collect all the errors
             # and re-raise them all at once
             raise ImproperlyConfigured(f"{self.name} must be a hexadecimal value, e.g. '0x1000'")
 ```
