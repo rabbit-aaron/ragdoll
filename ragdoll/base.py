@@ -85,12 +85,10 @@ class SettingProtocol(Protocol):  # pragma: no cover
     source: Mapping
 
     @classmethod
-    def configure_entry(cls, entry: BaseEntry, name: str, value: str):
-        pass
+    def configure_entry(cls, entry: BaseEntry, name: str, value: str): ...
 
     @classmethod
-    def configure(cls) -> None:
-        pass
+    def configure(cls) -> None: ...
 
 
 class SettingMeta(abc.ABCMeta):
