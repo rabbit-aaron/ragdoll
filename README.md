@@ -101,6 +101,76 @@ settings.DATABASES
 #     }
 # }
 ```
+
+### IMPORTANT: If your settings are only imported in your settings file, the `__dir__` function cannot be injected automatically.
+
+You will need to have at least 1 instance of Env in the settings module's global variable for the injection to work.
+
+### Bad Example: won't work
+```python
+# settings.py
+from other_settings import *
+```
+
+```python
+# other_settings
+from ragdoll.django import env
+
+MY_ENV = env.Str()
+```
+
+```python
+from django.conf import settings
+
+type(settings.MY_ENV) # ragdoll.django.env.Str :(
+```
+
+### Example 1: add a str env variable to the settings module
+```python
+# settings.py
+from ragdoll.django import env
+from other_settings import *
+
+MY_FOO = env.Str()
+```
+
+```python
+# other_settings
+from ragdoll.django import env
+
+MY_ENV = env.Str()
+```
+
+```python
+from django.conf import settings
+
+type(settings.MY_FOO) # str :D
+type(settings.MY_ENV) # str :D
+```
+
+
+### Example 2: manually inject the `__dir__`
+```python
+# settings.py
+from other_settings import *
+from ragdoll.django import env
+
+env.configure()
+```
+
+```python
+# other_settings
+from ragdoll.django import env
+
+MY_ENV = env.Str()
+```
+
+```python
+from django.conf import settings
+
+type(settings.MY_ENV) # str :D
+```
+
 ### IMPORTANT: THIS WILL NOT WORK
 Since the injected `__dir__` function only look at global variables, nested settings will not work,
 You must assign the settings to a global variable first, then use it in nested settings.

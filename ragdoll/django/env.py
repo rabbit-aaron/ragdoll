@@ -7,29 +7,55 @@ from types import ModuleType, SimpleNamespace
 
 from ragdoll import env
 from ragdoll.env import BaseEnvEntry
+from ragdoll.errors import ImproperlyConfigured
 
 
-def dir_factory(module: ModuleType) -> typing.Callable[[], list[str]]:
+def _dir_factory(module: ModuleType) -> typing.Callable[[], list[str]]:
     def dir_() -> typing.Generator[str, None, None]:
         mock_owner = SimpleNamespace(source=os.environ, case_sensitive=True)
+        errors = []
         for name, value in module.__dict__.items():
             if isinstance(value, BaseEnvEntry):
                 value.__set_name__(mock_owner, name)  # type: ignore[arg-type]
-                setattr(module, name, value.__get__(mock_owner, None))  # type: ignore[arg-type]
+                try:
+                    result = value.__get__(mock_owner, None)  # type: ignore[arg-type]
+
+                except ImproperlyConfigured as improperly_configured:
+                    errors.append(improperly_configured)
+                else:
+                    setattr(module, name, result)
             yield name
+        if errors:
+            raise ImproperlyConfigured(errors)
 
     return lambda: list(dir_())
 
 
+class ModuleNotFound(Exception):
+    pass
+
+
+def _configure(frame_idx: int) -> None:
+    frame = inspect.stack()[frame_idx].frame
+    module = inspect.getmodule(frame)
+
+    if not module:
+        raise ModuleNotFound
+
+    if not getattr(module, "_dir_patched", False):
+        setattr(module, "__dir__", _dir_factory(module))
+        setattr(module, "_dir_patched", True)
+
+    del frame
+
+
+def configure() -> None:
+    return _configure(frame_idx=2)
+
+
 class DjangoEnvEntryMixin:
     def __init__(self, *args, **kwargs):
-        frame = inspect.stack()[1].frame
-        module = inspect.getmodule(frame)
-        if not getattr(module, "_dir_patched", False):
-            module.__dir__ = dir_factory(module)
-            module._dir_patched = True
-
-        del frame
+        _configure(frame_idx=2)
         super().__init__(*args, **kwargs)
 
 

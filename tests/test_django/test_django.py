@@ -1,6 +1,9 @@
 from types import ModuleType
 
+import pytest
+
 from ragdoll.django import env
+from ragdoll.errors import ImproperlyConfigured
 
 
 def test_django_dir_patched(mocker):
@@ -36,3 +39,18 @@ def test_django_bool_env(monkeypatch, mocker):
     module.BAO = env.Bool()
     dir(module)
     assert module.BAO is True
+
+
+def test_error_aggregation(mocker):
+    module = ModuleType("settings")
+    mocker.patch("inspect.getmodule", return_value=module)
+    module.BAO = env.Bool()
+    module.MEOW = env.Int()
+
+    with pytest.raises(ImproperlyConfigured) as exc_info:
+        dir(module)
+
+    assert type(exc_info.value.args[0][0]) is ImproperlyConfigured
+    assert exc_info.value.args[0][0].args[0] == "BAO setting was not set"
+    assert type(exc_info.value.args[0][1]) is ImproperlyConfigured
+    assert exc_info.value.args[0][1].args[0] == "MEOW setting was not set"
