@@ -1,8 +1,7 @@
-import functools
 import os
 import typing
 
-from ragdoll import utils, errors
+from ragdoll import errors, utils
 from ragdoll.base import BaseEntry, BaseSetting
 
 __all__ = ["EnvSetting", "BaseEnvEntry", "StrEnv", "BoolEnv", "IntEnv"]
@@ -22,6 +21,10 @@ class StrEnv(BaseEnvEntry):
     def to_python(self, value: str) -> str:
         return value
 
+    if typing.TYPE_CHECKING:
+
+        def __get__(self, *args, **kwargs) -> str: ...
+
 
 class IntEnv(BaseEnvEntry):
     def __init__(self, *args, base: int = 10, **kwargs):
@@ -35,6 +38,10 @@ class IntEnv(BaseEnvEntry):
             raise errors.ImproperlyConfigured(
                 f"Cannot convert {self._name} to integer"
             ) from value_error
+
+    if typing.TYPE_CHECKING:
+
+        def __get__(self, *args, **kwargs) -> int: ...
 
 
 class BoolEnv(BaseEnvEntry):
@@ -55,14 +62,21 @@ class BoolEnv(BaseEnvEntry):
             f"{(self.TRUE_VALUES | self.FALSE_VALUES)!r}"
         )
 
+    if typing.TYPE_CHECKING:
+
+        def __get__(self, *args, **kwargs) -> bool: ...
+
 
 class EnvSetting(BaseSetting):
     case_sensitive = True
+    _source: typing.Optional[typing.Mapping] = None
 
     @utils.classproperty
-    @functools.lru_cache(maxsize=None)
     def source(cls) -> typing.Mapping:
-        if cls.case_sensitive:
-            return os.environ
-        else:
-            return {k.lower(): v for k, v in os.environ.items()}
+        if not cls._source:
+            if cls.case_sensitive:
+                cls._source = os.environ
+            else:
+                cls._source = {k.lower(): v for k, v in os.environ.items()}
+
+        return cls._source

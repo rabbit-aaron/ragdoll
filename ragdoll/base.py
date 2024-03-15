@@ -1,5 +1,5 @@
 import abc
-from typing import Any, Type, Union, Optional, Mapping
+from typing import Any, Mapping, Optional, Type, Union
 
 from ragdoll import errors, utils
 

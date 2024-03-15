@@ -1,19 +1,19 @@
 repos:
-    - repo: local
+    - repo: https://github.com/psf/black
+      rev: 24.1.1
       hooks:
         - id: black
-          name: black
-          language: python
-          entry: black
-          require_serial: true
-          types_or: [python, pyi]
+    - repo: https://github.com/PyCQA/flake8
+      rev: 7.0.0
+      hooks:
         - id: flake8
-          name: flake8
-          language: python
-          entry: flake8
-          require_serial: true
-          types_or: [python, pyi]
+          additional_dependencies:
+          - flake8-bugbear
+          - flake8-comprehensions
+    - repo: https://github.com/pycqa/isort
+      rev: 5.13.2
+      hooks:
+        - id: isort
 
 default_language_version:
-  python: python3.9
-
+  python: python3.11
