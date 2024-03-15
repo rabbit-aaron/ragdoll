@@ -1,7 +1,7 @@
 import os
 import typing
 
-from ragdoll import errors, utils
+from ragdoll import errors
 from ragdoll.base import BaseEntry, BaseSetting
 
 __all__ = ["EnvSetting", "BaseEnvEntry", "StrEnv", "BoolEnv", "IntEnv"]
@@ -13,8 +13,6 @@ class BaseEnvEntry(BaseEntry):
 
     def __set_name__(self, owner: typing.Type["EnvSetting"], name: str):
         super().__set_name__(owner, name)
-        if not owner.case_sensitive:
-            self._name = name.lower()
 
 
 class StrEnv(BaseEnvEntry):
@@ -68,15 +66,4 @@ class BoolEnv(BaseEnvEntry):
 
 
 class EnvSetting(BaseSetting):
-    case_sensitive = True
-    _source: typing.Optional[typing.Mapping] = None
-
-    @utils.classproperty
-    def source(cls) -> typing.Mapping:
-        if not cls._source:
-            if cls.case_sensitive:
-                cls._source = os.environ
-            else:
-                cls._source = {k.lower(): v for k, v in os.environ.items()}
-
-        return cls._source
+    source = os.environ

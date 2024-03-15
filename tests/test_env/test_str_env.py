@@ -4,7 +4,7 @@ from ragdoll import errors
 from ragdoll.env import EnvSetting, StrEnv
 
 
-def test_str_env_case_sensitive(monkeypatch):
+def test_str_env(monkeypatch):
     monkeypatch.setenv("FOO", "FOO")
     monkeypatch.setenv("BAR", "BAR")
 
@@ -14,20 +14,6 @@ def test_str_env_case_sensitive(monkeypatch):
 
     assert MyEnvSetting.FOO == "FOO"
     assert MyEnvSetting.bar is None
-
-
-def test_str_env_case_insensitive(monkeypatch):
-    monkeypatch.setenv("FOO", "FOO")
-    monkeypatch.setenv("BAR", "BAR")
-
-    class MyEnvSetting(EnvSetting):
-        case_sensitive = False
-
-        FOO = StrEnv()
-        bar = StrEnv()
-
-    assert MyEnvSetting.FOO == "FOO"
-    assert MyEnvSetting.bar == "BAR"
 
 
 def test_str_env_default_not_in_choice():

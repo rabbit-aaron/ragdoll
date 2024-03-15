@@ -1,7 +1,7 @@
 import pytest
 
 from ragdoll import errors
-from ragdoll.env import EnvSetting, BoolEnv
+from ragdoll.env import BoolEnv, EnvSetting
 
 
 def test_bool_env(monkeypatch):
