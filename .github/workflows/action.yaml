@@ -1,30 +1,27 @@
 on: push
 
 jobs:
-  ci:
+  pre-commit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v3
+      - uses: pre-commit/action@v3.0.1
+        with:
+          extra_args: --all-files
+
+  tests:
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
-        python: ["3.6", "3.7", "3.8", "3.9"]
+        python: ["3.6", "3.7", "3.8", "3.9", "3.10", "3.11", "3.12"]
     container:
-      image: python:${{ matrix.python }}
+      image: python:${{ matrix.python }}-alpine
     steps:
       - name: checkout repository
-        uses: actions/checkout@v2
-      - name: virtualenv for poetry
-        run: python -m venv ~/.poetry && ~/.poetry/bin/pip install --upgrade pip
-      - name: install poetry in virtualenv
-        run: ~/.poetry/bin/pip install poetry
-      - name: install python dependencies
-        run: ~/.poetry/bin/poetry install
-      - name: allow access to the virtualenv
-        run: echo PATH="$(~/.poetry/bin/poetry run printenv VIRTUAL_ENV)/bin:${PATH}" >> $GITHUB_ENV
-      - name: black
-        run: black --check .
-      - name: flake8
-        run: flake8
-      - name: pytest
-        run: pytest --cov=ragdoll --cov-report term-missing tests/
-      - name: build
-        run: ~/.poetry/bin/poetry build
+        uses: actions/checkout@v4
+      - name: make venv
+        run: python -m venv ~/.venv && ~/.venv/bin/pip install -r requirements.txt
+      - name: run tests
+        run: ~/.venv/bin/python -m pytest --cov=ragdoll --cov-report term-missing tests/

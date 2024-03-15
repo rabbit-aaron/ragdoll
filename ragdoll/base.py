@@ -1,14 +1,14 @@
 import abc
-from typing import Any, Type, Union, Optional, Mapping
+from typing import Any, Mapping, Optional, Type, Union
 
-from ragdoll import errors, utils
+from ragdoll import errors
 
 
 class BaseEntry(abc.ABC):
 
     _NOT_SET = object()
     DEFAULT_EXPORT = False
-    source: dict
+    source: Mapping
 
     def __init__(
         self,
@@ -89,11 +89,7 @@ class SettingMeta(abc.ABCMeta):
 class BaseSetting(metaclass=SettingMeta):
 
     auto_configure = True
-
-    @abc.abstractmethod
-    @utils.classproperty
-    def source(cls) -> Mapping:  # pragma: no cover
-        raise NotImplementedError
+    source: Mapping
 
     @classmethod
     def configure_entry(cls, entry: BaseEntry, name: str, value: str):
