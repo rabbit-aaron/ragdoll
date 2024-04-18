@@ -54,6 +54,9 @@ class MySetting(DjangoEnvSetting):
     # otherwise Django will not load them
     DEBUG = BoolEnv(False)
     DOMAIN_NAME = StrEnv("example.com")
+    # after v0.4.0 we support callable default
+    EXTRA_DOMAIN = StrEnv(lambda: "www.example.com")
+    
     MAX_CONNECTION_COUNT = IntEnv()
     
     # if export=False, this variable will not be automatically exported to the module
