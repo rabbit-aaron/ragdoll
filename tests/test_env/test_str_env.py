@@ -49,3 +49,10 @@ def test_str_env_name():
         FOO = StrEnv("")
 
     assert MyEnvSetting.__dict__["FOO"].name == "FOO"
+
+
+def test_str_env_callable_default():
+    class MyEnvSetting(EnvSetting):
+        FOO = StrEnv(lambda: "")
+
+    assert MyEnvSetting.FOO == ""

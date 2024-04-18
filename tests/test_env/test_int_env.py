@@ -49,3 +49,10 @@ def test_process_default_value_choices_error():
 
         class MyEnvSetting(EnvSetting):
             FOO = IntEnv("0", process_default_value=True, choices=[1])
+
+
+def test_int_env_callable_default():
+    class MyEnvSetting(EnvSetting):
+        FOO = IntEnv(lambda: 300)
+
+    assert MyEnvSetting.FOO == 300
