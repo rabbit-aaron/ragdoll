@@ -33,9 +33,15 @@ class BaseEntry(abc.ABC):
 
     @property
     def _default(self) -> Any:
+        if callable(self._default_value):
+            value = self._default_value()
+        else:
+            value = self._default_value
+
         if self._process_default_value:
-            return self.to_python(self._default_value)
-        return self._default_value
+            return self.to_python(value)
+
+        return value
 
     @property
     def name(self):

@@ -51,3 +51,10 @@ def test_bool_env_name():
         FOO = BoolEnv(False)
 
     assert MyEnvSetting.__dict__["FOO"].name == "FOO"
+
+
+def test_bool_env_callable_default():
+    class MyEnvSetting(EnvSetting):
+        FOO = BoolEnv(lambda: False)
+
+    assert MyEnvSetting.FOO is False
